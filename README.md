@@ -2,3 +2,9 @@
 
 proyecto final de algoritmo y programacion 
 
+Integrantes:
+-
+-
+-
+-
+
