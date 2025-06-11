@@ -19,6 +19,9 @@ bool valcontra(void){
 }
 void imagen(){
 
+
+
+    
 }
 
 
