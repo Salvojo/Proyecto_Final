@@ -2,7 +2,7 @@
 #include <conio.h>
 #include <windows.h>
 #include "Figuras.h"
-#include "abdias.h"
+#include "libreria.h"
 using namespace std;
 void gotoxy(int x,int y)
 { 
