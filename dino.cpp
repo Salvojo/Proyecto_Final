@@ -1,4 +1,4 @@
-#include <iostream>
+#include <iostream>//ya no quiero programar xd 
 #include <conio.h>
 #include <windows.h>
 using namespace std;
