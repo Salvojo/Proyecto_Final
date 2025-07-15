@@ -22,7 +22,7 @@ void menu();
 //funciones de la presentacion
 void pin(int, int);
 void cambio_color(int );
-
+void colorTextoFondo(int, int, bool);
 void cara1();
 void cara2();
 void cara3();
@@ -47,9 +47,8 @@ int main() {
 	if (flag == false)
 	    clave_incorrecta();
 	else {
-		bienvenida(); Sleep(200);
-		system("mode con cols=105 lines=25"); 
-     //Sleep(200);  
+		bienvenida();
+		//system("mode con cols=105 lines=25");   
     menu(); 
     }
     system("pause>NULL");
@@ -93,45 +92,36 @@ void cuadro(const int x,const int y,const int x1,const int y1) {
 }
 
 void limpiarPantalla() {
-    system("CLS");
+    system("cls");
 }
 
 bool clave() {
 
-	srand(time(NULL));
   	//int ale = 1+ rand()%3
 	string clave = "sipapiquerico";  
     int intentos = 0;      
-	int aleatorio;
-	int q;
+
+	int q, r;
     do {
 	    limpiarPantalla(); 
        string claveIngresada = "";  
        char caracter;
-       
-       
-       	cara3();
-		//cuadro(20,8,90,12);     
-   		gotoxy(40,9); cout << "INGRESE CLAVE: ";
-   		
-   		
-		q=0;
-        while ((caracter = getch()) != 13) {
-               
-			//movimiento de la cara
-			aleatorio= (rand()% 3);
 
-			if(aleatorio==1){
-				cara3();
-			}else if(aleatorio==2){
-				cara4();
-			}else if(aleatorio==3){
-				cara5();
-			}
-				
+       	cara3();
+ 
+   		gotoxy(75,9); cout << "INGRESE CLAVE: ";
+
+		q=0;r=0;
+        while ((caracter = getch()) != 13) { 
+			//movimiento de la cara
+			if(r>2)
+			cara4();
+			if(r>5)
+			cara5();
+			
 			claveIngresada.push_back(caracter); 
-            gotoxy(40+q,10);cout << "*"; 
-			q++;                    
+            gotoxy(75+q,10);cout << "*"; 
+			q++;r++;                  
         }
         cout << endl;
 
@@ -139,8 +129,8 @@ bool clave() {
             return true;  
         } else {
             intentos++;  
-            gotoxy(40,11); cout << "CLAVE INCORRECTA.";
-			gotoxy(40,12);cout<<"INTENTO "<< intentos << " de 3." << endl; getch();
+            gotoxy(75,11); cout << "CLAVE INCORRECTA.";
+			gotoxy(75,12);cout<<"INTENTO "<< intentos << " de 3." << endl; getch();
         }
 
     } while (intentos < 3);  
@@ -150,20 +140,42 @@ bool clave() {
 
 void clave_incorrecta() {
     limpiarPantalla();        
-    cuadro(20,8,90,12);     
-    gotoxy(30,9); cout << "Intento 3 veces ingresar con una clave incorrecta." << endl;
-    gotoxy(30,10); cout << "Comuniquese con el administrador";    
+    
+	for(int i=0; i<58;i++){
+		gotoxy(0,i);
+		for(int j=0; j<18;j++){
+		cout<<"ERROR 404 ";
+		//Sleep(2);
+		}
+
+	}
+	
+	int a=45,b=22,c=116,d=25;
+	cuadro(a,b-1,c,d+1); 
+	for(int i=0; i<4; i++){
+		gotoxy(a+1, b+i);
+		for(int j =0; j<70;j++){
+			cout<<" ";
+		}
+	}    
+    gotoxy(a+11,b+1); cout << "INTENTO 3 VECES INGRRESAR CON UNA CLAVE INCORRECTA" << endl;
+    gotoxy(a+11,b+2); cout << "	COMUNIQUESE CON EL ADMINISTRADOR";  
+	
 }
 
 void bienvenida() {
     limpiarPantalla();        
-    gotoxy(30,9); cout << "BIENVENIDO(A) AL JUEGO!!!";
+
+	cara2();
+	colorTextoFondo(5,15,false);
+	gotoxy(70,23); cout << "BIENVENIDO(A) AL JUEGO!!!";getch();
+	colorTextoFondo(7,0,false);
 }
 
 void presentacion(){
     //VARIABLES CONTROL
     srand(time(NULL));
-    int posX=50,posY=6;
+    int posX=75,posY=18;
     int c=255;//  "c" es de color
     int b=0;//mueve solo el BIT para que encage
     int r=0;//mueve solo el RUNNER
@@ -328,7 +340,7 @@ void salir() {
 }
 
 void menu() {
-    limpiarPantalla();
+    system("CLS");
 
     int x = 30; 
     int y = 10; 
@@ -371,7 +383,7 @@ void menu() {
                     case 10: instrucciones();break;
                     case 12: jugar();break;
                     case 14: creditos();break;
-                    case 16:salir();   break;
+                    case 16: salir();   break;
                 }
                 
                 if (y != 16)
@@ -380,7 +392,6 @@ void menu() {
         }
     }
 }
-
 
 void juego (){
 	srand(time(NULL));
@@ -483,15 +494,15 @@ char generarPiedras3(){
 	return opciones[aleatorio];
 }
 
-void cara1(){
+void cara1(){//no utilizada hasta ahora
 	//OJOS DERECHO
 	char a= 223, c=219;
 	//para manejar el for
-	const int m=40;
+	int m=40;
 	//ancho de la cara
 	int n=20;
 
-	
+	do{
 	for(int i=0;i<n;i++){
 		gotoxy(m+i,20); cout<<c;
 		gotoxy(m+i,21); cout<<c;
@@ -517,52 +528,55 @@ void cara1(){
 	//iris
 		gotoxy(m+2,21); cout<<a;
 		gotoxy(m+7,21); cout<<a;
-	
-	
+	m++;
+	Sleep(40);
+	}while(m<110);
 }
 
 void cara2(){
 	//OJOS IZQUIERDO
 	char a= 223, c=219;
 	//para manejar el for
-	const int m=40;
+	int m=40;
 	//ancho de la cara
 	int n=20;
-
-	
+	int y= 20;// vertical de la cara
+	do{
 	for(int i=0;i<n;i++){
-		gotoxy(m+i,20); cout<<c;
-		gotoxy(m+i,21); cout<<c;
-		gotoxy(m+i,22); cout<<c;
-		gotoxy(m+i,23); cout<<c;
-		gotoxy(m+i,24); cout<<c;
-		gotoxy(m+i,25); cout<<c;
-		gotoxy(m+i,26); cout<<c;
-		gotoxy(m+i,27); cout<<c;
-		gotoxy(m+i,28); cout<<c;
+		gotoxy(m+i,y); cout<<c;
+		gotoxy(m+i,y+1); cout<<c;
+		gotoxy(m+i,y+2); cout<<c;
+		gotoxy(m+i,y+3); cout<<c;
+		gotoxy(m+i,y+4); cout<<c;
+		gotoxy(m+i,y+5); cout<<c;
+		gotoxy(m+i,y+6); cout<<c;
+		gotoxy(m+i,y+7); cout<<c;
+		gotoxy(m+i,y+8); cout<<c;
 	}
 	//ojos
 	for(int i=0; i<3;i++){
-		gotoxy(m+i+10,21); cout<<" ";
-		gotoxy(m+i+15,21); cout<<" ";
+		gotoxy(m+i+10,y+1); cout<<" ";
+		gotoxy(m+i+15,y+1); cout<<" ";
 		
-		gotoxy(m+i+10,22); cout<<" ";
-		gotoxy(m+i+15,22); cout<<" ";
+		gotoxy(m+i+10,y+2); cout<<" ";
+		gotoxy(m+i+15,y+2); cout<<" ";
 		
-		gotoxy(m+i+10,23); cout<<" ";
-		gotoxy(m+i+15,23); cout<<" ";
+		gotoxy(m+i+10,y+3); cout<<" ";
+		gotoxy(m+i+15,y+3); cout<<" ";
 	}
 	//iris
-		gotoxy(m+12,21); cout<<a;
-		gotoxy(m+17,21); cout<<a;
-	
+		gotoxy(m+12,y+3); cout<<a;
+		gotoxy(m+17,y+3); cout<<a;
+	m++;
+	Sleep(20);
+	}while(m<110);
 }
 
 void cara3(){
 	//OJOS AL MEDIO
 	char a= 223, c=219;
 	//para manejar el for
-	const int m=40;
+	const int m=75;
 	int n=20;
 
 	for(int i=0;i<n;i++){
@@ -630,7 +644,7 @@ void cara5(){
 	//OJOS AL MEDIO
 	char a= 223, c=219;
 	//para manejar el for
-	const int m=40;
+	const int m=110;
 	int n=20;
 
 	for(int i=0;i<n;i++){
@@ -681,4 +695,20 @@ void ocultarCursor() {
         cci.bVisible = FALSE;
         SetConsoleCursorInfo(hcon, &cci);
     }
+}
+
+void colorTextoFondo(int colorTexto, int colorFondo = 0, bool usarFondoActual = true) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD fondoFinal;
+
+    if (usarFondoActual) {
+        GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+        fondoFinal = consoleInfo.wAttributes & 0xF0; // fondo actual
+    } else {
+        fondoFinal = (colorFondo & 0x0F) << 4; // nuevo fondo
+    }
+
+    WORD atributo = fondoFinal | (colorTexto & 0x0F);
+    SetConsoleTextAttribute(hConsole, atributo);
 }
