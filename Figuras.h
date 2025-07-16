@@ -17,7 +17,36 @@ void gotoxy(int x,int y) {
     dwPos.Y= y;  
     SetConsoleCursorPosition(hcon,dwPos);
 }
+const int ancho_personaje = 5;
+const int alto_personaje = 5;
+const int ancho_arbol = 3;
+const int alto_arbol = 3;
+const int ancho_ave = 3;
+const int alto_ave = 3;
+// Variables globales
+char personaje[alto_personaje][ancho_personaje] = {
+    {char(219), char(219), char(219), char(219), char(219)},
+    {char(219),' ', char(219),' ', char(219)},
+    {char(219),' ', char(219),' ', char(219)},
+    {char(219), char(219) , char(219),char(219),char(219)},
+    {char(219), char(219) , char(219),char(219),char(219)},
+};
 
+char arbol[alto_arbol][ancho_arbol] = {
+    {' ', 'V', ' '},
+    {'V', 'A', 'V'},
+    {' ', 'A', ' '}
+};
+char ave[alto_ave][ancho_ave] = {
+    {' ','-', ' '},
+    {'-', char(254),'-' },
+    {' ', '-', ' '}
+};
+char piedra [3][3] = {
+    {char(219),char(219),char(219)},
+    {char(219),char(219),char(219)},
+    {char(219),char(219),char(219)}
+};
 void cuadro(const int x,const int y,const int x1,const int y1) {
     char si = 201,ii = 200,sd = 187,id = 188,v = 186,h = 205; 
  	  int i,j;
