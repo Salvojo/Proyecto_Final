@@ -8,19 +8,14 @@
 #include <clocale> 
 using namespace std;
 bool colision(int x1, int y1, int x2, int y2);
-
 bool clave();
-
 void instrucciones();
 void jugar();
 void salir();
 void menu();
-
-
 void juego ();
 
 void ocultarCursor();
-
 int main() {
   	//SetConsoleOutputCP(CP_UTF8);
 	//system("mode con cols=105 lines=25");
@@ -74,7 +69,7 @@ bool colision(int x1, int y1, int x2, int y2) {
 bool clave() {
 
   	//int ale = 1+ rand()%3
-	string clave = "1";  
+	string clave = "123456789";  
     int intentos = 0;      
 
 	int q, r;
@@ -85,19 +80,18 @@ bool clave() {
 
        	cara3();
  
-   		gotoxy(75,9); cout << "INGRESE CLAVE: ";
+   	gotoxy(75,9); cout << "INGRESE CLAVE: ";
 
 		q=0;r=0;
         while ((caracter = getch()) != 13) { 
-			//movimiento de la cara
-			if(r==3)
-			cara4();
-			if(r==7)
-			cara5();
-			
-			claveIngresada.push_back(caracter); 
-            gotoxy(75+q,10);cout << "*"; 
-			q++;r++;                  
+	//movimiento de la cara
+	if(r==3)
+	cara4();
+	if(r==7)
+	cara5();
+	claveIngresada.push_back(caracter); 
+              gotoxy(75+q,10);cout << "*"; 
+	q++;r++;                  
         }
         cout << endl;
 
@@ -106,7 +100,7 @@ bool clave() {
         } else {
             intentos++;  
             gotoxy(75,11); cout << "CLAVE INCORRECTA.";
-			gotoxy(75,12);cout<<"INTENTO "<< intentos << " de 3." << endl; getch();
+            gotoxy(75,12);cout<<"INTENTO "<< intentos << " de 3." << endl; getch();
         }
 
     } while (intentos < 3);  
@@ -128,9 +122,6 @@ void instrucciones() {
 void jugar() {
     limpiarPantalla();
     juego();
-    
-     
-    
 	  getch();
 }
 
