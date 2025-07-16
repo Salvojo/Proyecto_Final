@@ -1,4 +1,3 @@
-//figuras usadas en presentacion,creditos
 #ifndef FIGURITAS_H
 #define FIGURITAS_H
 
@@ -254,7 +253,7 @@ void bienvenida() {
 void presentacion(){
     //VARIABLES CONTROL
     srand(time(NULL));
-    int posX=75,posY=18;
+    int posX=65,posY=18;
     int c=255;//  "c" es de color
     int b=0;//mueve solo el BIT para que encage
     int r=0;//mueve solo el RUNNER
