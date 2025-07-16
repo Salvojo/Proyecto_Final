@@ -1,5 +1,5 @@
-//PARA NIO ALTERAR
-
+#ifndef FIGURITAS_H
+#define FIGURITAS_H
 
 #include <iostream>
 #include <conio.h>
@@ -7,275 +7,216 @@
 #include <windows.h>
 #include <string.h>
 #include <ctime>
-
 using namespace std;
 
-void gotoxy(int x, int y);
-char generarPiedras();
-char generarPiedras2();
-char generarPiedras3();
-void ocultarCursor();
-void juego();
-
-const int ancho_personaje = 3;
-const int alto_personaje = 3;
-const int ancho_arbol = 3;
-const int alto_arbol = 3;
-
-// Variables globales
-char personaje[alto_personaje][ancho_personaje] = {
-    {' ', 'o', ' '},
-    {'/', '|', '\\'},
-    {'/', ' ', '\\'},
-};
-
-char arbol[alto_arbol][ancho_arbol] = {
-    {' ', '^', ' '},
-    {'^', '^', '^'},
-    {' ', '|', ' '}
-};
-char piedra [3][3] = {
-    {char(219),char(219),char(219)},
-    {char(219),char(219),char(219)},
-    {char(219),char(219),char(219)}
-};
-
-bool colision(int x1, int y1, int x2, int y2);
-
-int main() {
-    ocultarCursor();
-    juego();
-    return 0;
+void gotoxy(int x,int y) {
+    HANDLE hcon;  
+    hcon = GetStdHandle(STD_OUTPUT_HANDLE);  
+    COORD dwPos;  
+    dwPos.X = x;  
+    dwPos.Y= y;  
+    SetConsoleCursorPosition(hcon,dwPos);
 }
 
-void gotoxy(int x, int y) {
-    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD dwPos;
-    dwPos.X = x;
-    dwPos.Y = y;
-    SetConsoleCursorPosition(hcon, dwPos);
+void cuadro(const int x,const int y,const int x1,const int y1) {
+    char si = 201,ii = 200,sd = 187,id = 188,v = 186,h = 205; 
+ 	  int i,j;
+ 	
+	  gotoxy(x,y); cout << si;
+ 	  gotoxy(x1,y); cout << sd;
+ 	
+	  for(i = x + 1;i < x1;i++) {
+	     gotoxy(i,y); cout << h;  
+	  }  
+ 	
+	  for(j = y + 1;j < y1;j++) { 
+	     gotoxy(x,j); cout << v;
+	  }
+ 	
+	  gotoxy(x,y1); cout << ii;
+ 	  gotoxy(x1,y1); cout << id;
+ 	
+	  for(j = y + 1;j < y1;j++) {
+	     gotoxy(x1,j); cout << v;
+	  }
+  	
+	  for(i = x + 1;i <x1;i++) {
+	     gotoxy(i,y1); cout <<h;
+	  }  
 }
 
-void ocultarCursor() {
-    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cci;
-    cci.dwSize = 1;
-    cci.bVisible = FALSE;
-    SetConsoleCursorInfo(hcon, &cci);
-}
-
-bool colision(int x1, int y1, int x2, int y2) {
-    // Verificar si los rectángulos se superponen
-    if (x1 < x2 + ancho_arbol && 
-        x1 + ancho_personaje > x2 &&
-        y1 < y2 + alto_arbol && 
-        y1 + alto_personaje > y2) {
-        
-        // Verificar colisión píxel a píxel
-        for (int i = 0; i < alto_personaje; i++) {
-            for (int j = 0; j < ancho_personaje; j++) {
-                if (personaje[i][j] == ' ') continue;
-
-                int px = x1 + j;
-                int py = y1 + i;
-
-                for (int m = 0; m < alto_arbol; m++) {
-                    for (int n = 0; n < ancho_arbol; n++) {
-                        if (arbol[m][n] == ' ') continue;
-
-                        int ax = x2 + n;
-                        int ay = y2 + m;
-
-                        if (px == ax && py == ay) return true;
-                    }
-                }
-            }
-        }
-    }
-    return false;
-}
-
-void juego() {
-    srand(time(NULL));
-    // ==PUNTAJE==
-    float score =0;
-    int control_sleep=60;
-    // ==VELOCIDAD==
-    int velocidad =0;
-    // === CONFIGURACIÓN DEL JUEGO ===
-    const int ancho_camino = 130;
-    const int posicion_piso = 29;
-    
-    // === VARIABLES DEL PERSONAJE ===
-    int y_personaje = 24;
-    int y_personaje_anterior = y_personaje;
-    int gravedad = 1;
-    int salto = 0;
-    bool enelAire = false;
-    
-    // === VARIABLES DEL ÁRBOL ===
-    int pos_X_arbol = 60;
-    int pos_Y_arbol = 29;
-    int pos_X_arbol_anterior = 60;
-    
-    // === VARIABLES DE LA PIEDRA ===
-    int pos_X_piedra = 80;
-    int pos_Y_piedra = 29;
-    int pos_X_piedra_anterior = 80;
-    
-    // === VARIABLES DEL ESCENARIO ===
-    string PISO = "";
-    string rocas = "";
-    string rocas2 = "";
-    string rocas3 = "";
-    char piso1 = '_';
-    
-    // === CONTROL DE ENTRADA ===
-    char tecla;
-    
-    // Generar el piso y las rocas
-    for(int e = 0; e < ancho_camino; e++) {
-        rocas += generarPiedras();
-    }
-    for(int p = 0; p < ancho_camino; p++) {
-        rocas2 += generarPiedras2();
-    }
-    for(int j = 0; j < ancho_camino; j++) {
-        rocas3 += generarPiedras3();
-    }
-    for(int r = 0; r < ancho_camino; r++) {
-        PISO.push_back(piso1);
-    }
-    
-    // Limpiar pantalla inicial
+void limpiarPantalla() {
     system("cls");
+}
+
+void cambio_color(int x){
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),x);
+} 
+
+void pin (int x, int c){
     
-    while(true) {
-        // Borrar posición anterior del personaje usando la posición anterior guardada
-        for (int i = 0; i < alto_personaje; i++) {
-            gotoxy(5, y_personaje_anterior + i );
-            cout << "   "; // 3 espacios
-        }
-        
-        // Borrar posición anterior del árbol usando la posición anterior guardada
-        for (int i = 0; i < alto_arbol; i++) {
-            gotoxy(pos_X_arbol_anterior, pos_Y_arbol + i);
-            cout << "   "; // 3 espacios
-        }
-        // Borrar posición anterior de la piedra usando la posición anterior guardada
-        for (int i = 0; i < 3; i++) {
-            gotoxy(pos_X_piedra_anterior, pos_Y_piedra + i);
-            cout << "   "; // 3 espacios
-        }
-        
-        
-        // Dibujar el piso
-        gotoxy(0, posicion_piso + 2); cout << PISO; //Empieza desde el 2 por las dimensiones - 1....
-        gotoxy(0, posicion_piso + 3); cout << rocas; //....Las dimensiones del personaje y arbol
-        gotoxy(0, posicion_piso + 4); cout << rocas2;
-        gotoxy(0, posicion_piso + 5); cout << rocas3;
-
-        // Mover las rocas (efecto de scroll)
-        rocas = rocas.substr(1) + rocas[0];
-        rocas2 = rocas2.substr(1) + rocas2[0];
-        rocas3 = rocas3.substr(1) + rocas3[0];
-
-        // Dibujar personaje
-        for (int i = 0; i < alto_personaje; i++) {
-            gotoxy(5, y_personaje + i );
-            for (int j = 0; j < ancho_personaje; j++) {
-                cout << personaje[i][j];
-            }
-        }
-        
-        // Dibujar árbol
-        for (int i = 0; i < alto_arbol; i++) {
-            gotoxy(pos_X_arbol, pos_Y_arbol + i );
-            for (int j = 0; j < ancho_arbol; j++) {
-                cout << arbol[i][j];
-            }
-        }
-
-        // Dibujar piedra
-        for (int i = 0; i < 3; i++) {
-            gotoxy(pos_X_piedra, pos_Y_piedra + i );
-            for (int j = 0; j < 3; j++) {
-                cout << piedra[i][j];
-            }
-        }
-
-        // Mover el árbol hacia la izquierda
-        pos_X_arbol_anterior = pos_X_arbol;
-        pos_X_arbol--;
-        if(pos_X_arbol < 0) {
-            pos_X_arbol = 80 + rand() % 40; // Posición aleatoria
-        }
-        
-        // Mover la piedra hacia la izquierda
-        pos_X_piedra_anterior = pos_X_piedra;
-        pos_X_piedra--;
-        if(pos_X_piedra < 0) {
-            pos_X_piedra = 100 + rand() % 20; // Posición aleatoria
-        }
-
-
-        // Verificar colisión
-        if (colision(5, y_personaje - 2, pos_X_arbol, pos_Y_arbol - 2)) {// Los "2" son las dimensiones - 1
-            gotoxy(30, 5);
-            cout << "GAME OVER! Presiona cualquier tecla...";
-            getch();
-            break;
-        }
-        // Verificar colisión
-        if (colision(5, y_personaje - 2, pos_X_piedra, pos_Y_piedra - 2)) {// Los "2" son las dimensiones - 1
-            gotoxy(30, 5);
-            cout << "GAME OVER! Presiona cualquier tecla...";
-            getch();
-            break;
-        }
-
-        // Controles
-        if(kbhit()) {
-            tecla = getch();
-
-            if((tecla == 'w' || tecla == 32) && !enelAire) {
-                salto = 7; // Altura del salto
-                enelAire = true;
-            }    
-            
-            if(tecla == 27) { // ESC para salir
-                gotoxy(30, 5); 
-                cout << "SALIENDO...";
-                Sleep(1000);
-                break;
-            }
-        }
-
-        // Mecánica de salto y gravedad
-        y_personaje_anterior = y_personaje; // Guardar posición anterior antes de cambiar
-        if(salto > 0) {
-            y_personaje -= 1; // Subir
-            salto--;
-        } else if (y_personaje < posicion_piso) {
-            y_personaje += gravedad; // Caer por gravedad
-        } else {
-            enelAire = false;
-        }
-
-        // PUNTAJE
-        if(score == int(score)){
-        gotoxy(45, 2);cout << "PUNTAJE: "<<score;
-        }
-        score +=0.5;
-
-        //VELOCIDAD
-        if(velocidad%15==0 && control_sleep>10){
-        control_sleep--;
-        }
-        velocidad++;
-        Sleep(control_sleep);   
-
+    cambio_color (c);
+    for (int i = 0; i < x; i++) {
+        cout<<char(219);
     }
+
+}
+void colorTextoFondo(int colorTexto, int colorFondo = 0, bool usarFondoActual = true) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD fondoFinal;
+
+    if (usarFondoActual) {
+        GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+        fondoFinal = consoleInfo.wAttributes & 0xF0; // fondo actual
+    } else {
+        fondoFinal = (colorFondo & 0x0F) << 4; // nuevo fondo
+    }
+
+    WORD atributo = fondoFinal | (colorTexto & 0x0F);
+    SetConsoleTextAttribute(hConsole, atributo);
+}
+
+void cara2(){
+	//OJOS IZQUIERDO
+	char a= 223, c=219;
+	//para manejar el for
+	int m=40;
+	//ancho de la cara
+	int n=20;
+	int y= 20;// vertical de la cara
+	do{
+	for(int i=0;i<n;i++){
+		gotoxy(m+i,y); cout<<c;
+		gotoxy(m+i,y+1); cout<<c;
+		gotoxy(m+i,y+2); cout<<c;
+		gotoxy(m+i,y+3); cout<<c;
+		gotoxy(m+i,y+4); cout<<c;
+		gotoxy(m+i,y+5); cout<<c;
+		gotoxy(m+i,y+6); cout<<c;
+		gotoxy(m+i,y+7); cout<<c;
+		gotoxy(m+i,y+8); cout<<c;
+	}
+	//ojos
+	for(int i=0; i<3;i++){
+		gotoxy(m+i+10,y+1); cout<<" ";
+		gotoxy(m+i+15,y+1); cout<<" ";
+		
+		gotoxy(m+i+10,y+2); cout<<" ";
+		gotoxy(m+i+15,y+2); cout<<" ";
+		
+		gotoxy(m+i+10,y+3); cout<<" ";
+		gotoxy(m+i+15,y+3); cout<<" ";
+	}
+	//iris
+		gotoxy(m+12,y+3); cout<<a;
+		gotoxy(m+17,y+3); cout<<a;
+	m++;
+	Sleep(20);
+	}while(m<110);
+}
+
+void cara3(){
+	//OJOS AL MEDIO
+	char a= 223, c=219;
+	//para manejar el for
+	const int m=75;
+	int n=20;
+
+	for(int i=0;i<n;i++){
+		gotoxy(m+i,20); cout<<c;
+		gotoxy(m+i,21); cout<<c;
+		gotoxy(m+i,22); cout<<c;
+		gotoxy(m+i,23); cout<<c;
+		gotoxy(m+i,24); cout<<c;
+		gotoxy(m+i,25); cout<<c;
+		gotoxy(m+i,26); cout<<c;
+		gotoxy(m+i,27); cout<<c;
+		gotoxy(m+i,28); cout<<c;
+	}
+	//ojos
+	for(int i=0; i<3;i++){
+		gotoxy(m+i+6,21); cout<<" ";
+		gotoxy(m+i+11,21); cout<<" ";
+		
+		gotoxy(m+i+6,22); cout<<" ";
+		gotoxy(m+i+11,22); cout<<" ";
+		
+		gotoxy(m+i+6,23); cout<<" ";
+		gotoxy(m+i+11,23); cout<<" ";
+	}
+	//iris
+		gotoxy(m+8,21); cout<<a;
+		gotoxy(m+13,21); cout<<a;
+	
+}
+void cara4(){
+	//OJOS AL MEDIO
+	char a= 223, c=219;
+	//para manejar el for
+	const int m=40;
+	int n=20;
+
+	for(int i=0;i<n;i++){
+		gotoxy(m+i,20); cout<<c;
+		gotoxy(m+i,21); cout<<c;
+		gotoxy(m+i,22); cout<<c;
+		gotoxy(m+i,23); cout<<c;
+		gotoxy(m+i,24); cout<<c;
+		gotoxy(m+i,25); cout<<c;
+		gotoxy(m+i,26); cout<<c;
+		gotoxy(m+i,27); cout<<c;
+		gotoxy(m+i,28); cout<<c;
+	}
+	//ojos
+	for(int i=0; i<3;i++){
+		//gotoxy(m+i+6,21); cout<<" ";
+		gotoxy(m+i+11,21); cout<<" ";
+		
+		//gotoxy(m+i+6,22); cout<<" ";
+		gotoxy(m+i+11,22); cout<<" ";
+		
+		gotoxy(m+i+6,23); cout<<" ";
+		gotoxy(m+i+11,23); cout<<" ";
+	}
+	//iris
+		//gotoxy(m+8,21); cout<<a;
+		gotoxy(m+13,21); cout<<a;
+	
+}
+void cara5(){
+	//OJOS AL MEDIO
+	char a= 223, c=219;
+	//para manejar el for
+	const int m=110;
+	int n=20;
+
+	for(int i=0;i<n;i++){
+		gotoxy(m+i,20); cout<<c;
+		gotoxy(m+i,21); cout<<c;
+		gotoxy(m+i,22); cout<<c;
+		gotoxy(m+i,23); cout<<c;
+		gotoxy(m+i,24); cout<<c;
+		gotoxy(m+i,25); cout<<c;
+		gotoxy(m+i,26); cout<<c;
+		gotoxy(m+i,27); cout<<c;
+		gotoxy(m+i,28); cout<<c;
+	}
+	//ojos
+	for(int i=0; i<3;i++){
+		gotoxy(m+i+6,21); cout<<" ";
+		//gotoxy(m+i+11,21); cout<<" ";
+		
+		gotoxy(m+i+6,22); cout<<" ";
+		//gotoxy(m+i+11,22); cout<<" ";
+		
+		gotoxy(m+i+6,23); cout<<" ";
+		gotoxy(m+i+11,23); cout<<" ";
+	}
+	//iris
+		gotoxy(m+8,21); cout<<a;
+		//gotoxy(m+13,21); cout<<a;
+	
 }
 
 char generarPiedras(){
@@ -299,3 +240,176 @@ char generarPiedras3(){
 	
 	return opciones[aleatorio];
 }
+
+
+void bienvenida() {
+    limpiarPantalla();        
+
+	cara2();
+	colorTextoFondo(5,15,false);
+	gotoxy(70,23); cout << "BIENVENIDO(A) AL JUEGO!!!";getch();
+	colorTextoFondo(7,0,false);
+}
+void presentacion(){
+    //VARIABLES CONTROL
+    srand(time(NULL));
+    int posX=65,posY=18;
+    int c=255;//  "c" es de color
+    int b=0;//mueve solo el BIT para que encage
+    int r=0;//mueve solo el RUNNER
+    while(true){
+    //BIT
+    //cout << "\n\t";//1era linea
+    gotoxy(b+posX,posY);pin(6,c);
+    gotoxy(b+posX+8,posY);pin(2,c);
+    gotoxy(b+posX+12,posY);pin(6,c);
+
+    //cout << "\n\t";//2da linea
+    gotoxy(b+posX,posY+1);pin(2,c);
+    gotoxy(b+posX+4,posY+1);pin(2,c);
+    gotoxy(b+posX+8,posY+1);pin(2,c);
+    gotoxy(b+posX+14,posY+1);pin(2,c);
+
+    //cout << "\n\t";//3 linea
+    gotoxy(b+posX,posY+2);pin(6,c);
+    gotoxy(b+posX+8,posY+2);pin(2,c);
+    gotoxy(b+posX+14,posY+2);pin(2,c);
+    
+    //cout << "\n\t";//4 linea
+    gotoxy(b+posX,posY+3);pin(4,c);
+    gotoxy(b+posX+8,posY+3);pin(2,c);
+    gotoxy(b+posX+14,posY+3);pin(2,c);
+
+    //cout << "\n\t";//5 linea
+    gotoxy(b+posX,posY+4);pin(6,c);
+    gotoxy(b+posX+8,posY+4);pin(2,c);
+    gotoxy(b+posX+14,posY+4);pin(2,c);
+    
+    //cout << "\n\t";//6da linea
+    gotoxy(b+posX,posY+5);pin(2,c);
+    gotoxy(b+posX+4,posY+5);pin(2,c);
+    gotoxy(b+posX+8,posY+5);pin(2,c);
+    gotoxy(b+posX+14,posY+5);pin(2,c);
+
+    //cout << "\n\t";//7 linea
+    gotoxy(b+posX,posY+6);pin(6,c);
+    gotoxy(b+posX+8,posY+6);pin(2,c);
+    gotoxy(b+posX+14,posY+6);pin(2,c);
+
+
+    //RUNNER
+    //cout << "\n\t";//1 linea
+    gotoxy(r+posX-16,posY+8);pin(6,c);
+    gotoxy(r+posX-8,posY+8);pin(2,c);
+    gotoxy(r+posX-4,posY+8);pin(2,c);
+    gotoxy(r+posX,posY+8);pin(2,c);
+    gotoxy(r+posX+6,posY+8);pin(2,c);
+    gotoxy(r+posX+10,posY+8);pin(2,c);
+    gotoxy(r+posX+16,posY+8);pin(2,c);
+    gotoxy(r+posX+20,posY+8);pin(4,c);
+    gotoxy(r+posX+26,posY+8);pin(6,c);
+    //cout << "\n\t";//2 linea
+    gotoxy(r+posX-16,posY+9);pin(2,c);
+    gotoxy(r+posX-12,posY+9);pin(2,c);
+    gotoxy(r+posX-8,posY+9);pin(2,c);
+    gotoxy(r+posX-4,posY+9);pin(2,c);
+    gotoxy(r+posX,posY+9);pin(4,c);
+    gotoxy(r+posX+6,posY+9);pin(2,c);
+    gotoxy(r+posX+10,posY+9);pin(4,c);
+    gotoxy(r+posX+16,posY+9);pin(2,c);
+    gotoxy(r+posX+20,posY+9);pin(2,c);
+    gotoxy(r+posX+26,posY+9);pin(2,c);
+    gotoxy(r+posX+30,posY+9);pin(2,c);
+    //cout << "\n\t";//3 linea
+    gotoxy(r+posX-16,posY+10);pin(6,c);
+    gotoxy(r+posX-8,posY+10);pin(2,c);
+    gotoxy(r+posX-4,posY+10);pin(2,c);
+    gotoxy(r+posX,posY+10);pin(8,c);
+    gotoxy(r+posX+10,posY+10);pin(8,c);
+    gotoxy(r+posX+20,posY+10);pin(4,c);
+    gotoxy(r+posX+26,posY+10);pin(6,c);
+    //cout << "\n\t";//4 linea
+    gotoxy(r+posX-16,posY+11);pin(4,c);
+    gotoxy(r+posX-8,posY+11);pin(2,c);
+    gotoxy(r+posX-4,posY+11);pin(2,c);
+    gotoxy(r+posX,posY+11);pin(2,c);
+    gotoxy(r+posX+4,posY+11);pin(4,c);
+    gotoxy(r+posX+10,posY+11);pin(2,c);
+    gotoxy(r+posX+14,posY+11);pin(4,c);
+    gotoxy(r+posX+20,posY+11);pin(4,c);
+    gotoxy(r+posX+26,posY+11);pin(4,c);
+    //cout << "\n\t";//5 linea
+    gotoxy(r+posX-16,posY+12);pin(2,c);
+    gotoxy(r+posX-12,posY+12);pin(2,c);
+    gotoxy(r+posX-8,posY+12);pin(2,c);
+    gotoxy(r+posX-4,posY+12);pin(2,c);
+    gotoxy(r+posX,posY+12);pin(2,c);
+    gotoxy(r+posX+4,posY+12);pin(4,c);
+    gotoxy(r+posX+10,posY+12);pin(2,c);
+    gotoxy(r+posX+14,posY+12);pin(4,c);
+    gotoxy(r+posX+20,posY+12);pin(2,c);
+    gotoxy(r+posX+26,posY+12);pin(2,c);
+    gotoxy(r+posX+30,posY+12);pin(2,c);
+    //cout << "\n\t";//6 linea
+    gotoxy(r+posX-16,posY+13);pin(2,c);
+    gotoxy(r+posX-12,posY+13);pin(2,c);
+    gotoxy(r+posX-8,posY+13);pin(6,c);
+    gotoxy(r+posX,posY+13);pin(2,c);
+    gotoxy(r+posX+6,posY+13);pin(2,c);
+    gotoxy(r+posX+10,posY+13);pin(2,c);
+    gotoxy(r+posX+16,posY+13);pin(2,c);
+    gotoxy(r+posX+20,posY+13);pin(4,c);
+    gotoxy(r+posX+26,posY+13);pin(2,c);
+    gotoxy(r+posX+30,posY+13);pin(2,c);
+
+	c= 257 + (rand()% 267);
+	if(kbhit()){
+		char tecla = getch();
+		if(tecla==13){
+			break;
+			}
+		}
+		
+    Sleep(1000);
+    }
+	cambio_color(15);
+}
+
+void clave_incorrecta() {
+    limpiarPantalla();        
+    
+	for(int i=0; i<58;i++){
+		gotoxy(0,i);
+		for(int j=0; j<18;j++){
+		cout<<"ERROR 404 ";
+		//Sleep(2);
+		}
+
+	}
+	
+	int a=45,b=22,c=116,d=25;
+	cuadro(a,b-1,c,d+1); 
+	for(int i=0; i<4; i++){
+		gotoxy(a+1, b+i);
+		for(int j =0; j<70;j++){
+			cout<<" ";
+		}
+	}    
+    gotoxy(a+11,b+1); cout << "INTENTO 3 VECES INGRRESAR CON UNA CLAVE INCORRECTA" << endl;
+    gotoxy(a+11,b+2); cout << "	COMUNIQUESE CON EL ADMINISTRADOR";  
+	
+}
+
+void creditos() {
+    limpiarPantalla();         
+    gotoxy(30,9); cout << "CREDITOS:" << endl;
+    gotoxy(30,11); cout << "Desarrolladores del juego:";
+    gotoxy(30,12); cout << "- Figueroa Campos, Cristhofer";
+    gotoxy(30,13); cout << "- Pesantes Huaylla, Jhunior";
+    gotoxy(30,14); cout << "- Horna Fabian, Isai";
+    gotoxy(30,15); cout << "- Burgos Mendoza, Cristian";
+    gotoxy(30,18); cout << "Presione una tecla para continuar" << endl;
+    getch();
+}
+
+#endif 
