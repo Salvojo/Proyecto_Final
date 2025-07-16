@@ -100,10 +100,7 @@ void jugar() {
     juego();
     
      
-     
-            
-    gotoxy(30,9); cout << "JUGAR EN CONSTRUCCION" << endl;
-    gotoxy(30,12); cout << "Presione una tecla para continuar" << endl;
+    
 	  getch();
 }
 
@@ -313,3 +310,4 @@ void ocultarCursor() {
         SetConsoleCursorInfo(hcon, &cci);
     }
 }
+
