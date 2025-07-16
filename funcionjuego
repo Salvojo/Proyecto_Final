@@ -1,0 +1,300 @@
+//PARA NIO ALTERAR
+
+
+#include <iostream>
+#include <conio.h>
+#include <cstdlib>
+#include <windows.h>
+#include <string.h>
+#include <ctime>
+
+using namespace std;
+
+void gotoxy(int x, int y);
+char generarPiedras();
+char generarPiedras2();
+char generarPiedras3();
+void ocultarCursor();
+void juego();
+
+const int ancho_personaje = 3;
+const int alto_personaje = 3;
+const int ancho_arbol = 3;
+const int alto_arbol = 3;
+
+// Variables globales
+char personaje[alto_personaje][ancho_personaje] = {
+    {' ', 'o', ' '},
+    {'/', '|', '\\'},
+    {'/', ' ', '\\'},
+};
+
+char arbol[alto_arbol][ancho_arbol] = {
+    {' ', '^', ' '},
+    {'^', '^', '^'},
+    {' ', '|', ' '}
+};
+char piedra [3][3] = {
+    {char(219),char(219),char(219)},
+    {char(219),char(219),char(219)},
+    {char(219),char(219),char(219)}
+};
+
+bool colision(int x1, int y1, int x2, int y2);
+
+int main() {
+    ocultarCursor();
+    juego();
+    return 0;
+}
+
+void gotoxy(int x, int y) {
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwPos;
+    dwPos.X = x;
+    dwPos.Y = y;
+    SetConsoleCursorPosition(hcon, dwPos);
+}
+
+void ocultarCursor() {
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cci;
+    cci.dwSize = 1;
+    cci.bVisible = FALSE;
+    SetConsoleCursorInfo(hcon, &cci);
+}
+
+bool colision(int x1, int y1, int x2, int y2) {
+    // Verificar si los rectángulos se superponen
+    if (x1 < x2 + ancho_arbol && 
+        x1 + ancho_personaje > x2 &&
+        y1 < y2 + alto_arbol && 
+        y1 + alto_personaje > y2) {
+        
+        // Verificar colisión píxel a píxel
+        for (int i = 0; i < alto_personaje; i++) {
+            for (int j = 0; j < ancho_personaje; j++) {
+                if (personaje[i][j] == ' ') continue;
+
+                int px = x1 + j;
+                int py = y1 + i;
+
+                for (int m = 0; m < alto_arbol; m++) {
+                    for (int n = 0; n < ancho_arbol; n++) {
+                        if (arbol[m][n] == ' ') continue;
+
+                        int ax = x2 + n;
+                        int ay = y2 + m;
+
+                        if (px == ax && py == ay) return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void juego() {
+    srand(time(NULL));
+    // ==PUNTAJE==
+    float score =0;
+    int control_sleep=60;
+    // ==VELOCIDAD==
+    int velocidad =0;
+    // === CONFIGURACIÓN DEL JUEGO ===
+    const int ancho_camino = 130;
+    const int posicion_piso = 29;
+    
+    // === VARIABLES DEL PERSONAJE ===
+    int y_personaje = 24;
+    int y_personaje_anterior = y_personaje;
+    int gravedad = 1;
+    int salto = 0;
+    bool enelAire = false;
+    
+    // === VARIABLES DEL ÁRBOL ===
+    int pos_X_arbol = 60;
+    int pos_Y_arbol = 29;
+    int pos_X_arbol_anterior = 60;
+    
+    // === VARIABLES DE LA PIEDRA ===
+    int pos_X_piedra = 80;
+    int pos_Y_piedra = 29;
+    int pos_X_piedra_anterior = 80;
+    
+    // === VARIABLES DEL ESCENARIO ===
+    string PISO = "";
+    string rocas = "";
+    string rocas2 = "";
+    string rocas3 = "";
+    char piso1 = '_';
+    
+    // === CONTROL DE ENTRADA ===
+    char tecla;
+    
+    // Generar el piso y las rocas
+    for(int e = 0; e < ancho_camino; e++) {
+        rocas += generarPiedras();
+    }
+    for(int p = 0; p < ancho_camino; p++) {
+        rocas2 += generarPiedras2();
+    }
+    for(int j = 0; j < ancho_camino; j++) {
+        rocas3 += generarPiedras3();
+    }
+    for(int r = 0; r < ancho_camino; r++) {
+        PISO.push_back(piso1);
+    }
+    
+    // Limpiar pantalla inicial
+    system("cls");
+    
+    while(true) {
+        // Borrar posición anterior del personaje usando la posición anterior guardada
+        for (int i = 0; i < alto_personaje; i++) {
+            gotoxy(5, y_personaje_anterior + i );
+            cout << "   "; // 3 espacios
+        }
+        
+        // Borrar posición anterior del árbol usando la posición anterior guardada
+        for (int i = 0; i < alto_arbol; i++) {
+            gotoxy(pos_X_arbol_anterior, pos_Y_arbol + i);
+            cout << "   "; // 3 espacios
+        }
+        // Borrar posición anterior de la piedra usando la posición anterior guardada
+        for (int i = 0; i < 3; i++) {
+            gotoxy(pos_X_piedra_anterior, pos_Y_piedra + i);
+            cout << "   "; // 3 espacios
+        }
+        
+        
+        // Dibujar el piso
+        gotoxy(0, posicion_piso + 2); cout << PISO; //Empieza desde el 2 por las dimensiones - 1....
+        gotoxy(0, posicion_piso + 3); cout << rocas; //....Las dimensiones del personaje y arbol
+        gotoxy(0, posicion_piso + 4); cout << rocas2;
+        gotoxy(0, posicion_piso + 5); cout << rocas3;
+
+        // Mover las rocas (efecto de scroll)
+        rocas = rocas.substr(1) + rocas[0];
+        rocas2 = rocas2.substr(1) + rocas2[0];
+        rocas3 = rocas3.substr(1) + rocas3[0];
+
+        // Dibujar personaje
+        for (int i = 0; i < alto_personaje; i++) {
+            gotoxy(5, y_personaje + i );
+            for (int j = 0; j < ancho_personaje; j++) {
+                cout << personaje[i][j];
+            }
+        }
+        
+        // Dibujar árbol
+        for (int i = 0; i < alto_arbol; i++) {
+            gotoxy(pos_X_arbol, pos_Y_arbol + i );
+            for (int j = 0; j < ancho_arbol; j++) {
+                cout << arbol[i][j];
+            }
+        }
+
+        // Dibujar piedra
+        for (int i = 0; i < 3; i++) {
+            gotoxy(pos_X_piedra, pos_Y_piedra + i );
+            for (int j = 0; j < 3; j++) {
+                cout << piedra[i][j];
+            }
+        }
+
+        // Mover el árbol hacia la izquierda
+        pos_X_arbol_anterior = pos_X_arbol;
+        pos_X_arbol--;
+        if(pos_X_arbol < 0) {
+            pos_X_arbol = 80 + rand() % 40; // Posición aleatoria
+        }
+        
+        // Mover la piedra hacia la izquierda
+        pos_X_piedra_anterior = pos_X_piedra;
+        pos_X_piedra--;
+        if(pos_X_piedra < 0) {
+            pos_X_piedra = 100 + rand() % 20; // Posición aleatoria
+        }
+
+
+        // Verificar colisión
+        if (colision(5, y_personaje - 2, pos_X_arbol, pos_Y_arbol - 2)) {// Los "2" son las dimensiones - 1
+            gotoxy(30, 5);
+            cout << "GAME OVER! Presiona cualquier tecla...";
+            getch();
+            break;
+        }
+        // Verificar colisión
+        if (colision(5, y_personaje - 2, pos_X_piedra, pos_Y_piedra - 2)) {// Los "2" son las dimensiones - 1
+            gotoxy(30, 5);
+            cout << "GAME OVER! Presiona cualquier tecla...";
+            getch();
+            break;
+        }
+
+        // Controles
+        if(kbhit()) {
+            tecla = getch();
+
+            if((tecla == 'w' || tecla == 32) && !enelAire) {
+                salto = 7; // Altura del salto
+                enelAire = true;
+            }    
+            
+            if(tecla == 27) { // ESC para salir
+                gotoxy(30, 5); 
+                cout << "SALIENDO...";
+                Sleep(1000);
+                break;
+            }
+        }
+
+        // Mecánica de salto y gravedad
+        y_personaje_anterior = y_personaje; // Guardar posición anterior antes de cambiar
+        if(salto > 0) {
+            y_personaje -= 1; // Subir
+            salto--;
+        } else if (y_personaje < posicion_piso) {
+            y_personaje += gravedad; // Caer por gravedad
+        } else {
+            enelAire = false;
+        }
+
+        // PUNTAJE
+        if(score == int(score)){
+        gotoxy(45, 2);cout << "PUNTAJE: "<<score;
+        }
+        score +=0.5;
+
+        //VELOCIDAD
+        if(velocidad%15==0 && control_sleep>10){
+        control_sleep--;
+        }
+        velocidad++;
+        Sleep(control_sleep);   
+
+    }
+}
+
+char generarPiedras() {
+    int aleatorio = rand() % 15;
+    char opciones[] = {char(178), char(178), char(177),char(177), char(178),char(177),char(178), 
+        char(178), char(178), char(178), char(178),char(177),char(178), char(177),char(178)};
+    return opciones[aleatorio];
+}
+
+char generarPiedras2() {
+    int aleatorio = rand() % 15;
+    char opciones[] = {'.',  char(177), char(177), char(177),  char(177), '_',  char(176),  
+        char(177),  char(177),  char(176),  char(177),  char(177), char(177), ' ',  char(176)};
+    return opciones[aleatorio];
+}
+
+char generarPiedras3() {
+    int aleatorio = rand() % 15;
+    char opciones[] = {' ',  char(176),char(176), char(176), ' ',char(176), char(176), 
+        char(176), '.', char(176), char(176), char(176), ' ', ' ', ' '};
+    return opciones[aleatorio];
+}
