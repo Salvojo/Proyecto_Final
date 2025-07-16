@@ -7,6 +7,7 @@
 #include "figuritas.h"
 #include <clocale> 
 using namespace std;
+bool colision(int x1, int y1, int x2, int y2);
 
 bool clave();
 
@@ -39,7 +40,36 @@ int main() {
     system("pause>NULL");
 	return 0;
 }
+bool colision(int x1, int y1, int x2, int y2) {
+    // Verificar si los rectángulos se superponen
+    if (x1 < x2 + ancho_arbol && 
+        x1 + ancho_personaje > x2 &&
+        y1 < y2 + alto_arbol && 
+        y1 + alto_personaje > y2) {
+        
+        // Verificar colisión píxel a píxel
+        for (int i = 0; i < alto_personaje; i++) {
+            for (int j = 0; j < ancho_personaje; j++) {
+                if (personaje[i][j] == ' ') continue;
 
+                int px = x1 + j;
+                int py = y1 + i;
+
+                for (int m = 0; m < alto_arbol; m++) {
+                    for (int n = 0; n < ancho_arbol; n++) {
+                        if (arbol[m][n] == ' ') continue;
+
+                        int ax = x2 + n;
+                        int ay = y2 + m;
+
+                        if (px == ax && py == ay) return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
 
 bool clave() {
 
@@ -224,79 +254,228 @@ void menu() {
 }
 void juego (){
 	srand(time(NULL));
+    // ==PUNTAJE==
+    float score =0;
+    int control_sleep=60;
+    // ==VELOCIDAD==
+    int velocidad =0;
+    // === CONFIGURACIÓN DEL JUEGO ===
+    const int ancho_camino = 130;
+    const int posicion_piso = 27;
+    
+    // === VARIABLES DEL PERSONAJE ===
+    int y_personaje = 22;
+    int y_personaje_anterior = y_personaje;
+    int gravedad = 1;
+    int salto = 0;
+    bool enelAire = false;
+    
+    // === VARIABLES DEL ÁRBOL ===
+    int pos_X_arbol = 60;
+    int pos_Y_arbol = 29;
+    int pos_X_arbol_anterior = 60;
+    
+    // === VARIABLES DE LA PIEDRA ===
+    int pos_X_piedra = 80;
+    int pos_Y_piedra = 29;
+    int pos_X_piedra_anterior = 80;
+    
+    // === VARIABLES DEL AVE ===
+    int pos_X_ave = 100;
+    int pos_Y_ave = 20;
+    int pos_X_ave_anterior = 100;
+    
+    // === VARIABLES DEL ESCENARIO ===
+    string PISO = "";
+    string rocas = "";
+    string rocas2 = "";
+    string rocas3 = "";
+    char piso1 = '_';
+    
+    // === CONTROL DE ENTRADA ===
+    char tecla;
+    
+    // Generar el piso y las rocas
+    for(int e = 0; e < ancho_camino; e++) {
+        rocas += generarPiedras();
+    }
+    for(int p = 0; p < ancho_camino; p++) {
+        rocas2 += generarPiedras2();
+    }
+    for(int j = 0; j < ancho_camino; j++) {
+        rocas3 += generarPiedras3();
+    }
+    for(int r = 0; r < ancho_camino; r++) {
+        PISO.push_back(piso1);
+    }
+    
+    // Limpiar pantalla inicial
+    system("cls");
+    
+    while(true) {
+        // Borrar posición anterior del personaje usando la posición anterior guardada
+        for (int i = 0; i < alto_personaje; i++) {
+            gotoxy(5, y_personaje_anterior + i );
+            cout << "     "; // 5 espacios
+        }
+        
+        // Borrar posición anterior del árbol usando la posición anterior guardada
+        for (int i = 0; i < alto_arbol; i++) {
+            gotoxy(pos_X_arbol_anterior, pos_Y_arbol + i);
+            cout << "   "; // 3 espacios
+        }
+        // Borrar posición anterior de la piedra usando la posición anterior guardada
+        for (int i = 0; i < 3; i++) {
+            gotoxy(pos_X_piedra_anterior, pos_Y_piedra + i);
+            cout << "   "; // 3 espacios
+        }
+        // Borrar posición anterior del ave usando la posición anterior guardada
+        for (int i = 0; i < alto_ave; i++) {
+            gotoxy(pos_X_ave_anterior, pos_Y_ave + i);
+            cout << "   "; // 3 espacios
+        }
+        
+        // Dibujar el piso
+        gotoxy(0, posicion_piso + 4); cout << PISO; //Empieza desde el 2 por las dimensiones - 1....
+        gotoxy(0, posicion_piso + 5); cout << rocas; //....Las dimensiones del personaje y arbol
+        gotoxy(0, posicion_piso + 6); cout << rocas2;
+        gotoxy(0, posicion_piso + 7); cout << rocas3;
+
+        // Mover las rocas (efecto de scroll)
+        rocas = rocas.substr(1) + rocas[0];
+        rocas2 = rocas2.substr(1) + rocas2[0];
+        rocas3 = rocas3.substr(1) + rocas3[0];
+
+        // Dibujar personaje
+        for (int i = 0; i < alto_personaje; i++) {
+            gotoxy(5, y_personaje + i );
+            for (int j = 0; j < ancho_personaje; j++) {
+                cout << personaje[i][j];
+            }
+        }
+        
+
+        for (int i = 0; i < alto_arbol; i++) {
+            gotoxy(pos_X_arbol, pos_Y_arbol + i );
+            for (int j = 0; j < ancho_arbol; j++) {
+                if (arbol[i][j] == 'V') {
+                    cambio_color(10); // Verde
+                    cout << char(219);
+                } else if (arbol[i][j] == 'A') {
+                    cambio_color(6); // Amarillo
+                    cout << char(219);
+                } else {
+                    cambio_color(7); // Color por defecto
+                    cout << ' ';
+                }
+                cambio_color(7); // Restablece color
+            }
+        }
+
+        // Dibujar piedra
+        for (int i = 0; i < 3; i++) {
+            gotoxy(pos_X_piedra, pos_Y_piedra + i );
+            for (int j = 0; j < 3; j++) {
+                cout << piedra[i][j];
+            }
+        }
+
+        // Dibujar ave
+        for (int i = 0; i < alto_ave; i++) {
+            gotoxy(pos_X_ave, pos_Y_ave + i );
+            for (int j = 0; j < ancho_ave; j++) {
+                cout << ave[i][j];
+            }
+        }
+
+        // Mover el árbol hacia la izquierda
+        pos_X_arbol_anterior = pos_X_arbol;
+        pos_X_arbol--;
+        if(pos_X_arbol < 0) {
+            pos_X_arbol = 80 + rand() % 40; // Posición aleatoria
+        }
+        
+        // Mover la piedra hacia la izquierda
+        pos_X_piedra_anterior = pos_X_piedra;
+        pos_X_piedra--;
+        if(pos_X_piedra < 0) {
+            pos_X_piedra = 100 + rand() % 20; // Posición aleatoria
+        }
+
+
+        // Mover el ave de izquierda a derecha
+        pos_X_ave_anterior = pos_X_ave;
+        pos_X_ave--;
+        if(pos_X_ave < 0) {
+            pos_X_ave = 100 + rand() % 30; // Posición aleatoria de respawn
+        }
+
+        // Verificar colisión
+        if (colision(5, y_personaje - 4, pos_X_arbol, pos_Y_arbol - 2)) {// Los "2" son las dimensiones - 1
+            gotoxy(30, 5);
+            cout << "GAME OVER! Presiona cualquier tecla...";
+            getch();
+            break;
+        }
+        // Verificar colisión
+        if (colision(5, y_personaje - 4, pos_X_piedra, pos_Y_piedra - 2)) {// Los "2" son las dimensiones - 1
+            gotoxy(30, 5);
+            cout << "GAME OVER! Presiona cualquier tecla...";
+            getch();
+            break;
+        }
+        // Verificar colisión
+        if (colision(5, y_personaje - 4, pos_X_ave, pos_Y_ave - 2)) {
+            gotoxy(30, 5);
+            cout << "GAME OVER! Presiona cualquier tecla...";
+            getch();
+            break;
+        }
+
+        // Controles
+        if(kbhit()) {
+            tecla = getch();
+
+            if((tecla == 'w' || tecla == 32) && !enelAire) {
+                salto = 10; // Altura del salto
+                enelAire = true;
+            }    
+            
+            if(tecla == 27) { // ESC para salir
+                gotoxy(30, 5); 
+                cout << "SALIENDO...";
+                Sleep(1000);
+                break;
+            }
+        }
+
+        // Mecánica de salto y gravedad
+        y_personaje_anterior = y_personaje; // Guardar posición anterior antes de cambiar
+        if(salto > 0) {
+            y_personaje -= 1; // Subir
+            salto--;
+        } else if (y_personaje < posicion_piso) {
+            y_personaje += gravedad; // Caer por gravedad
+        } else {
+            enelAire = false;
+        }
+
+        // PUNTAJE
+        if(score == int(score)){
+        gotoxy(45, 2);cout << "PUNTAJE: "<<score;
+        }
+        score +=0.5;
+
+        //VELOCIDAD
+        if(velocidad%15==0 && control_sleep>10){
+        control_sleep--;
+        }
+        velocidad++;
+        Sleep(control_sleep);   
+
+    }
 	
 	//variables
-	char tecla;
-	int mov =200;
-	
-	char piso1 = 95;
-	
-	//Representa la distancia del camino
-	int ancho = 100;
-
-	string PISO = "";
-	string rocas ="";
-	string rocas2 ="";
-	string rocas3 ="";
-	
-	//PISO AVER
-	
-	//Algo aleatorio roquitas en la primera linea
-	for(int e=0;e<ancho;e++){
-		rocas += generarPiedras();
-	}
-	//Roquitas en la segunda linea
-		for(int p=0;p<ancho;p++){
-		rocas2 += generarPiedras2();
-	}
-	//Roquitas en la tercera linea
-		for(int j=0;j<ancho;j++){
-		rocas3 += generarPiedras3();
-	}
-	
-	
-	//Algo constante como el piso
-	for(int r=0;r<ancho; r++){
-		PISO.push_back(piso1);
-	}
-	
-		
-	
-	while(true){
-		
-		gotoxy(0,21);
-        cout<<PISO;
-		
-		
-		gotoxy(0,22);
-		cout<<rocas;
-		rocas= rocas.substr(1)+ rocas[0];	
-	
-		gotoxy(0,23);
-		cout<<rocas2;
-		rocas2= rocas2.substr(1)+ rocas2[0];
-	
-	
-		gotoxy(0,24);
-		cout<<rocas3;
-		rocas3= rocas3.substr(1)+ rocas3[0];
-	
-		if(kbhit()){
-			
-			tecla = getch();
-			if(tecla==27){
-				gotoxy(12,3);
-				cout<<"SALIENDO..";
-				break;
-				
-			}
-		}
-		
-		
-		
-		Sleep(150);
-		system("cls");
-	}
 	
 	
 }
@@ -310,4 +489,3 @@ void ocultarCursor() {
         SetConsoleCursorInfo(hcon, &cci);
     }
 }
-
