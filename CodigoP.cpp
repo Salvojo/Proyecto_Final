@@ -114,9 +114,9 @@ bool clave() {
 		q=0;r=0;
         while ((caracter = getch()) != 13) { 
 			//movimiento de la cara
-			if(r>2)
+			if(r==2)
 			cara4();
-			if(r>5)
+			if(r==5)
 			cara5();
 			
 			claveIngresada.push_back(caracter); 
