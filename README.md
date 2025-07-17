@@ -10,6 +10,3 @@ requisitos para jugar el juego:
 - 💬 Ask me about anything. I will try to help you as much as I can.
 - ⚡ Usuarios con poca hasta bastante experiencia de juego
 - 📫 Muchas ganas de divertirse :
-
-Energia final   ███░░░░░░░░░░░░░░░░ 
-⭐️
