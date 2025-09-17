@@ -7,6 +7,5 @@ requisitos para jugar el juego:
 
 - 🔭 que tengan instalado el dev-c++ o visual studio code
 - 👯 +18
-- 💬 Ask me about anything. I will try to help you as much as I can.
 - ⚡ Usuarios con poca hasta bastante experiencia de juego
 - 📫 Muchas ganas de divertirse :
